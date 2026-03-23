@@ -1,0 +1,10 @@
+artifact_location: file:///Users/tohids/Downloads/MLOps-POC-1-main./mlruns/807260931486410727/models/m-4ad57541461a4f0d92ecd36b1944e993/artifacts
+creation_timestamp: 1770279384565
+experiment_id: '807260931486410727'
+last_updated_timestamp: 1770279387118
+model_id: m-4ad57541461a4f0d92ecd36b1944e993
+model_type: null
+name: model
+source_run_id: 1c5003cae2ab45a7aaf4d297a69abe0f
+status: 2
+status_message: null

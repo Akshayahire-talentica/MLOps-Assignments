@@ -1,0 +1,99 @@
+# Prometheus Configuration for MLOps Monitoring
+# Scrapes metrics from API, MLflow, Airflow, and model services
+
+global:
+  scrape_interval: 15s      # How frequently to scrape targets
+  evaluation_interval: 15s  # How frequently to evaluate rules
+  external_labels:
+    cluster: 'mlops-poc'
+    environment: 'production'
+
+# Alerting configuration (optional - connects to Alertmanager)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+          # - 'alertmanager:9093'  # Uncomment if using Alertmanager
+
+# Load alert rules from separate file
+rule_files:
+  - "alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          component: 'prometheus'
+
+  # MLOps API Service (main FastAPI service)
+  - job_name: 'mlops-api'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['api-service:8000']
+        labels:
+          service: 'api'
+          component: 'model-serving'
+
+  # Model v2 Service
+  - job_name: 'mlops-model-v2'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['model-v2-service:8000']
+        labels:
+          service: 'model-v2'
+          component: 'model-serving'
+
+  # Router Service
+  - job_name: 'mlops-router'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['router-service:8080']
+        labels:
+          service: 'router'
+          component: 'traffic-routing'
+
+  # MLflow Tracking Server (if it exposes metrics)
+  - job_name: 'mlflow'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['mlflow:5000']
+        labels:
+          service: 'mlflow'
+          component: 'experiment-tracking'
+
+  # Streamlit UI (if it exposes metrics)
+  - job_name: 'streamlit-ui'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['streamlit-ui:8501']
+        labels:
+          service: 'streamlit'
+          component: 'ui'
+
+  # Airflow Webserver (if it exposes metrics)
+  - job_name: 'airflow-web'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['airflow-webserver:8080']
+        labels:
+          service: 'airflow'
+          component: 'orchestration'
+
+  # Grafana (for monitoring Grafana itself)
+  - job_name: 'grafana'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['grafana:3000']
+        labels:
+          service: 'grafana'
+          component: 'monitoring'

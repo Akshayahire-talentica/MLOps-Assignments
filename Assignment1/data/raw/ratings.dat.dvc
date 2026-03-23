@@ -1,0 +1,5 @@
+outs:
+- md5: 3e10346c6f0034d81a9a8cc9ff5a21b3
+  size: 25594340
+  hash: md5
+  path: ratings.dat

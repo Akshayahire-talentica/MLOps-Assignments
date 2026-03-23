@@ -1,0 +1,57 @@
+{
+  "annotations": {"list": []},
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Model v2 - Request Rate",
+      "targets": [
+        { "expr": "rate(model_v2_requests_total[1m])", "refId": "A" }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "type": "graph",
+      "title": "Model v2 - Request Latency (95th percentile)",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(model_v2_request_latency_seconds_bucket[1m])) by (le))", "refId": "B" }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "type": "graph",
+      "title": "Router - Routed to v1 / v2 (rate)",
+      "targets": [
+        { "expr": "rate(router_routed_to_v1_total[1m])", "refId": "C" },
+        { "expr": "rate(router_routed_to_v2_total[1m])", "refId": "D" }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 6}
+    },
+    {
+      "type": "graph",
+      "title": "Percent traffic to v2 (1m)",
+      "targets": [
+        { "expr": "(rate(router_routed_to_v2_total[1m]) / (rate(router_routed_to_v1_total[1m]) + rate(router_routed_to_v2_total[1m]))) * 100", "refId": "E" }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 6}
+    },
+    {
+      "type": "stat",
+      "title": "Current canary percent (router)",
+      "targets": [
+        { "expr": "(rate(router_routed_to_v2_total[5m]) / (rate(router_routed_to_v1_total[5m]) + rate(router_routed_to_v2_total[5m]))) * 100", "refId": "F" }
+      ],
+      "gridPos": {"h": 4, "w": 12, "x": 0, "y": 12}
+    },
+    {
+      "type": "stat",
+      "title": "Model v2 95th Latency (s)",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(model_v2_request_latency_seconds_bucket[1m])) by (le))", "refId": "G" }
+      ],
+      "gridPos": {"h": 4, "w": 12, "x": 12, "y": 12}
+    }
+  ],
+  "schemaVersion": 16,
+  "title": "Model v2 Overview",
+  "version": 2
+}

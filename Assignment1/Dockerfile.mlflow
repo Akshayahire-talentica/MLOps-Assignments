@@ -1,0 +1,6 @@
+FROM ghcr.io/mlflow/mlflow:v2.9.2
+# Install PostgreSQL adapter + AWS S3 support + curl for healthcheck
+RUN pip install --no-cache-dir psycopg2-binary boto3 s3transfer && \
+    apt-get update -qq && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*

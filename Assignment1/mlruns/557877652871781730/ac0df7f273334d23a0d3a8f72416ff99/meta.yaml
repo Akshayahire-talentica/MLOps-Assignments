@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/tohids/Downloads/MLOps-POC-1-main./mlruns/557877652871781730/ac0df7f273334d23a0d3a8f72416ff99/artifacts
+end_time: 1770228710788
+entry_point_name: ''
+experiment_id: '557877652871781730'
+lifecycle_stage: active
+run_id: ac0df7f273334d23a0d3a8f72416ff99
+run_name: baseline_mean_v1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1770228708963
+status: 3
+tags: []
+user_id: tohids

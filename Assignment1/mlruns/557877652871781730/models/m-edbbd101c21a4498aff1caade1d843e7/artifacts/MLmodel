@@ -1,0 +1,14 @@
+artifact_path: file:///Users/tohids/Downloads/MLOps-POC-1-main./mlruns/557877652871781730/models/m-edbbd101c21a4498aff1caade1d843e7/artifacts
+flavors:
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+mlflow_version: 3.1.4
+model_id: m-edbbd101c21a4498aff1caade1d843e7
+model_size_bytes: 127
+model_uuid: m-edbbd101c21a4498aff1caade1d843e7
+prompts: null
+run_id: ac0df7f273334d23a0d3a8f72416ff99
+utc_time_created: '2026-02-04 18:11:49.545190'

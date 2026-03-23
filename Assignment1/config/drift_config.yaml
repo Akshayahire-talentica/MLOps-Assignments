@@ -1,0 +1,95 @@
+# Drift Detection Configuration
+# MLOps POC - Drift Monitoring Configuration
+
+detection:
+  enabled: true
+  check_interval_hours: 24
+  
+  # Statistical Tests
+  tests:
+    ks_test:
+      enabled: true
+      significance_level: 0.05  # P-value threshold
+    
+    psi:  # Population Stability Index
+      enabled: true
+      threshold: 0.2  # 0.1 = minor, 0.2 = moderate, 0.25+ = major drift
+    
+    chi_square:
+      enabled: true
+      significance_level: 0.05
+
+# Thresholds for alerts
+thresholds:
+  warning: 0.15   # Drift score 0.15-0.25 = warning
+  critical: 0.25  # Drift score >= 0.25 = critical
+  
+  # Performance degradation
+  rmse_degradation_percent: 10  # Alert if RMSE increases >10%
+  mae_degradation_percent: 10
+
+# Features to monitor
+features:
+  numerical:
+    - user_id
+    - item_id
+    - rating
+    - timestamp
+  
+  categorical:
+    - genre
+    - user_age_group
+
+# Baseline data configuration
+baseline:
+  storage_path: "data/baseline"
+  update_frequency_days: 30
+  minimum_samples: 1000
+  
+  # Auto-update baseline if drift is stable
+  auto_update: false
+
+# Reporting
+reporting:
+  output_path: "reports/drift"
+  format: "json"
+  include_visualizations: true
+  
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    metric_prefix: "mlops_drift"
+
+# Actions on drift detection
+actions:
+  on_warning:
+    - send_notification
+    - log_to_file
+  
+  on_critical:
+    - send_notification
+    - trigger_retraining
+    - create_incident_ticket
+    - rollback_if_needed
+
+# Auto-retrain configuration
+retrain:
+  auto_trigger: true
+  on_critical_drift: true
+  min_samples_required: 1000
+  retrain_delay_hours: 1  # Wait 1 hour before triggering retrain
+  max_retrain_per_day: 3
+
+# Notification channels
+notifications:
+  slack:
+    enabled: false
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+  
+  email:
+    enabled: false
+    recipients:
+      - mlops-team@example.com
+  
+  prometheus_alert:
+    enabled: true

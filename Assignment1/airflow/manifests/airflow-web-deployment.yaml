@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-web
+  namespace: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+      - name: airflow-web
+        image: apache/airflow:2.7.2
+        command: [ "airflow", "webserver" ]
+        envFrom:
+        - configMapRef:
+            name: airflow-config
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        volumeMounts:
+        - name: dag-volume
+          mountPath: /opt/airflow/dags
+      volumes:
+      - name: dag-volume
+        configMap:
+          name: airflow-dags

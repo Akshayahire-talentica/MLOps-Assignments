@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-02-24T12:01:41.850777",
+  "validations": [
+    {
+      "dataset": "movies",
+      "check": "no_null_movie_ids",
+      "passed": true
+    },
+    {
+      "dataset": "movies",
+      "check": "unique_movie_ids",
+      "passed": true
+    },
+    {
+      "dataset": "ratings",
+      "check": "ratings_in_range_1_5",
+      "passed": true
+    },
+    {
+      "dataset": "ratings",
+      "check": "no_null_user_ids",
+      "passed": true
+    },
+    {
+      "dataset": "users",
+      "check": "no_null_user_ids",
+      "passed": true
+    },
+    {
+      "dataset": "users",
+      "check": "unique_user_ids",
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLOps Platform - Test Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.ok {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status.error {
+            background-color: #f44336;
+            color: white;
+        }
+        .test-section {
+            background-color: #f9f9f9;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            background-color: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error-result {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100px;
+            margin: 0 5px;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .link-box {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .link-box a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 MLOps Platform - Interactive Test Interface</h1>
+        
+        <div class="info-box">
+            <strong>📡 Public Endpoint:</strong> <code id="endpoint">http://13.200.226.162:30080</code>
+            <button onclick="updateEndpoint()">Update IP</button>
+        </div>
+
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>1. Health Check <span class="status" id="health-status"></span></h2>
+            <p>Test if the router service is running and responding.</p>
+            <button onclick="testHealth()">Test Health</button>
+            <div id="health-result"></div>
+        </div>
+
+        <!-- Prediction Test -->
+        <div class="test-section">
+            <h2>2. Movie Recommendation Prediction</h2>
+            <p>Get movie recommendations for a user.</p>
+            <label>User ID: <input type="number" id="userId" value="1" min="1"></label>
+            <label>Movie ID: <input type="number" id="movieId" value="100" min="1"></label>
+            <button onclick="testPredict()">Get Prediction</button>
+            <div id="predict-result"></div>
+        </div>
+
+        <!-- Canary Routing Test -->
+        <div class="test-section">
+            <h2>3. Canary Routing Test</h2>
+            <p>Send multiple requests to see traffic distribution between v1 and v2.</p>
+            <label>Number of requests: <input type="number" id="numRequests" value="10" min="1" max="50"></label>
+            <button onclick="testCanary()">Test Canary Routing</button>
+            <div id="canary-result"></div>
+        </div>
+
+        <!-- Change Canary Percentage -->
+        <div class="test-section">
+            <h2>4. Change Canary Percentage</h2>
+            <p>Adjust the percentage of traffic going to v2.</p>
+            <label>Canary %: <input type="number" id="canaryPercent" value="50" min="0" max="100"></label>
+            <button onclick="setCanary()">Update Canary</button>
+            <div id="canary-set-result"></div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="test-section">
+            <h2>5. Prometheus Metrics</h2>
+            <p>View routing statistics.</p>
+            <button onclick="testMetrics()">Get Metrics</button>
+            <div id="metrics-result"></div>
+        </div>
+    </div>
+
+    <!-- Port-Forward Instructions -->
+    <div class="container">
+        <h1>🖥️ UI Access (Requires Port-Forward)</h1>
+        
+        <div class="warning-box">
+            <strong>⚠️ Important:</strong> These UIs require you to run port-forward commands in separate terminal windows FIRST.
+        </div>
+
+        <div class="link-box">
+            <strong>📊 MLflow UI:</strong><br>
+            <code>kubectl port-forward svc/mlflow 5000:5000 -n mlops</code><br>
+            Then open: <a href="http://localhost:5000" target="_blank">http://localhost:5000</a>
+        </div>
+
+        <div class="link-box">
+            <strong>📈 Prometheus UI:</strong><br>
+            <code>kubectl port-forward svc/prometheus 9090:9090 -n mlops</code><br>
+            Then open: <a href="http://localhost:9090" target="_blank">http://localhost:9090</a>
+        </div>
+
+        <div class="link-box">
+            <strong>📖 API Documentation:</strong><br>
+            <code>kubectl port-forward svc/mlops-api 8000:8000 -n mlops</code><br>
+            Then open: <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000/docs</a>
+        </div>
+
+        <div class="info-box">
+            <h3>How to run port-forward commands:</h3>
+            <ol>
+                <li>Open a NEW terminal window</li>
+                <li>Copy and paste one of the <code>kubectl port-forward</code> commands above</li>
+                <li>Press Enter (it will keep running)</li>
+                <li>Click the link to open the UI</li>
+                <li>Leave the terminal running while using the UI</li>
+                <li>Press Ctrl+C in the terminal to stop when done</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const ENDPOINT = 'http://13.200.226.162:30080';
+
+        function updateEndpoint() {
+            const newIp = prompt('Enter node IP (or press Cancel to keep current):', '13.200.226.162');
+            if (newIp) {
+                document.getElementById('endpoint').textContent = `http://${newIp}:30080`;
+                location.reload();
+            }
+        }
+
+        function showResult(elementId, content, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = isError ? 'result error-result' : 'result';
+            element.textContent = content;
+            element.style.display = 'block';
+        }
+
+        async function testHealth() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${ENDPOINT}/health`);
+                const data = await response.json();
+                
+                document.getElementById('health-status').textContent = 'OK';
+                document.getElementById('health-status').className = 'status ok';
+                
+                showResult('health-result', JSON.stringify(data, null, 2));
+            } catch (error) {
+                document.getElementById('health-status').textContent = 'ERROR';
+                document.getElementById('health-status').className = 'status error';
+                
+                showResult('health-result', `Error: ${error.message}`, true);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Test Health';
+            }
+        }
+
+        async function testPredict() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Getting prediction...';
+            
+            const userId = document.getElementById('userId').value;
+            const movieId = document.getElementById('movieId').value;
+            
+            try {
+                const response = await fetch(`${ENDPOINT}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: parseInt(userId),
+                        movie_id: parseInt(movieId)
+                    })
+                });
+                
+                const data = await response.json();
+                showResult('predict-result', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('predict-result', `Error: ${error.message}`, true);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Get Prediction';
+            }
+        }
+
+        async function testCanary() {
+            const button = event.target;
+            button.disabled = true;
+            const numRequests = parseInt(document.getElementById('numRequests').value);
+            button.textContent = `Testing (0/${numRequests})...`;
+            
+            let results = [];
+            let v1Count = 0;
+            let v2Count = 0;
+            
+            try {
+                for (let i = 1; i <= numRequests; i++) {
+                    button.textContent = `Testing (${i}/${numRequests})...`;
+                    
+                    const response = await fetch(`${ENDPOINT}/predict`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: i,
+                            movie_id: 100
+                        })
+                    });
+                    
+                    const backend = response.headers.get('X-Backend') || 'unknown';
+                    if (backend === 'v1') v1Count++;
+                    if (backend === 'v2') v2Count++;
+                    
+                    results.push(`Request ${i}: ${backend}`);
+                }
+                
+                const summary = `
+Canary Routing Test Results:
+============================
+Total Requests: ${numRequests}
+V1 (API):       ${v1Count} (${Math.round(v1Count/numRequests*100)}%)
+V2 (Model):     ${v2Count} (${Math.round(v2Count/numRequests*100)}%)
+
+${results.join('\n')}`;
+                
+                showResult('canary-result', summary);
+            } catch (error) {
+                showResult('canary-result', `Error: ${error.message}`, true);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Test Canary Routing';
+            }
+        }
+
+        async function setCanary() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Updating...';
+            
+            const percent = parseInt(document.getElementById('canaryPercent').value);
+            
+            try {
+                const response = await fetch(`${ENDPOINT}/admin/set_canary`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ percent: percent })
+                });
+                
+                const data = await response.json();
+                showResult('canary-set-result', `Success! Canary percentage set to ${percent}%\n\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                showResult('canary-set-result', `Error: ${error.message}`, true);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Update Canary';
+            }
+        }
+
+        async function testMetrics() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Fetching...';
+            
+            try {
+                const response = await fetch(`${ENDPOINT}/metrics`);
+                const data = await response.text();
+                
+                // Extract relevant metrics
+                const lines = data.split('\n').filter(line => 
+                    line.includes('router_routed') && !line.startsWith('#')
+                );
+                
+                showResult('metrics-result', lines.join('\n') || data);
+            } catch (error) {
+                showResult('metrics-result', `Error: ${error.message}`, true);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Get Metrics';
+            }
+        }
+
+        // Test health on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 500);
+        });
+    </script>
+</body>
+</html>

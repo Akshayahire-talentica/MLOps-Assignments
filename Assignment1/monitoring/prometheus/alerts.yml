@@ -1,0 +1,169 @@
+# Prometheus Alerting Rules for MLOps POC
+# Task: Drift alerts (Owner: Vikas)
+# Input: Drift metrics
+# Output: Alerts configured
+
+groups:
+  - name: mlops_drift_alerts
+    interval: 30s
+    rules:
+      # Critical drift detection
+      - alert: CriticalDataDrift
+        expr: mlops_drift_score >= 0.25
+        for: 5m
+        labels:
+          severity: critical
+          component: drift_detection
+          owner: vikas
+        annotations:
+          summary: "Critical data drift detected"
+          description: "Drift score {{ $value }} exceeds critical threshold (0.25). Immediate action required."
+          action: "Review drift report and consider model rollback or retraining"
+          runbook: "https://wiki.example.com/mlops/drift-response"
+      
+      # Warning drift detection
+      - alert: WarningDataDrift
+        expr: mlops_drift_score >= 0.15 and mlops_drift_score < 0.25
+        for: 10m
+        labels:
+          severity: warning
+          component: drift_detection
+          owner: vikas
+        annotations:
+          summary: "Data drift warning detected"
+          description: "Drift score {{ $value }} in warning range (0.15-0.25). Monitor closely."
+          action: "Review drift patterns and schedule model evaluation"
+      
+      # Model performance degradation
+      - alert: ModelPerformanceDegradation
+        expr: |
+          (model_rmse - model_rmse offset 24h) / model_rmse offset 24h > 0.10
+        for: 15m
+        labels:
+          severity: warning
+          component: model_performance
+          owner: vikas
+        annotations:
+          summary: "Model performance degraded"
+          description: "RMSE increased by {{ $value | humanizePercentage }} over last 24 hours"
+          action: "Investigate root cause and consider retraining"
+      
+      # API latency increase
+      - alert: HighPredictionLatency
+        expr: prediction_duration_seconds{quantile="0.95"} > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api_performance
+        annotations:
+          summary: "High prediction latency detected"
+          description: "95th percentile latency is {{ $value }}s (threshold: 1.0s)"
+          action: "Check model serving infrastructure"
+      
+      # High error rate
+      - alert: HighPredictionErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m]) 
+          / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: api_health
+        annotations:
+          summary: "High API error rate"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+          action: "Investigate errors and consider rollback"
+
+  - name: mlops_model_health
+    interval: 1m
+    rules:
+      # Model service down
+      - alert: ModelServiceDown
+        expr: up{job="model-v2"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: model_service
+          owner: aksay
+        annotations:
+          summary: "Model service is down"
+          description: "Model v2 service has been down for more than 2 minutes"
+          action: "Attempt automatic rollback to v1, then investigate"
+      
+      # MLflow unavailable
+      - alert: MLflowDown
+        expr: up{job="mlflow"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          component: mlflow
+        annotations:
+          summary: "MLflow tracking server is down"
+          description: "Cannot track experiments or serve models from registry"
+          action: "Restart MLflow service"
+      
+      # No predictions for extended period
+      - alert: NoPredictionsReceived
+        expr: rate(model_predictions_total[10m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+          component: model_usage
+        annotations:
+          summary: "No predictions received"
+          description: "No prediction requests in last 10 minutes"
+          action: "Check if traffic routing is working correctly"
+
+  - name: mlops_data_quality
+    interval: 1m
+    rules:
+      # Missing features
+      - alert: HighMissingValueRate
+        expr: data_missing_values_percent > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: data_quality
+        annotations:
+          summary: "High rate of missing values"
+          description: "{{ $value }}% of recent predictions have missing features"
+          action: "Investigate data pipeline and feature engineering"
+      
+      # Outliers detected
+      - alert: HighOutlierRate
+        expr: data_outliers_percent > 5
+        for: 5m
+        labels:
+          severity: info
+          component: data_quality
+        annotations:
+          summary: "High outlier detection rate"
+          description: "{{ $value }}% of recent data contains outliers"
+          action: "Review data sources and validation rules"
+
+  - name: mlops_resource_usage
+    interval: 30s
+    rules:
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Container memory usage high"
+          description: "Memory usage at {{ $value | humanizePercentage }} of limit"
+          action: "Consider scaling or optimizing model"
+      
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: info
+          component: infrastructure
+        annotations:
+          summary: "Container CPU usage high"
+          description: "CPU usage sustained at {{ $value | humanizePercentage }}"
+          action: "Monitor for performance impact"

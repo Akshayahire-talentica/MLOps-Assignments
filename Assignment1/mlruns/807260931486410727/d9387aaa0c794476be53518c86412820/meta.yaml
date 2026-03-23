@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/tohids/Downloads/MLOps-POC-1-main./mlruns/807260931486410727/d9387aaa0c794476be53518c86412820/artifacts
+end_time: 1770279337938
+entry_point_name: ''
+experiment_id: '807260931486410727'
+lifecycle_stage: active
+run_id: d9387aaa0c794476be53518c86412820
+run_name: nmf_recommendation_v2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1770279332326
+status: 3
+tags: []
+user_id: tohids

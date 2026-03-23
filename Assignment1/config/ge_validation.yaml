@@ -1,0 +1,75 @@
+ge:
+  context_root_dir: "great_expectations"
+  datasource_name: "pandas_runtime"
+  data_connector_name: "default_runtime_data_connector_name"
+  batch_identifier: "default_identifier_name"
+
+# Optional S3 base overrides per stage (can also be provided via env vars)
+# Example env: GE_S3_RAW_BASE=s3://my-bucket/raw
+s3_base:
+  raw: "s3://mlops-movielens-poc/raw"
+  processed: "s3://mlops-movielens-poc/processed"
+  features: "s3://mlops-movielens-poc/features"
+  training: "s3://mlops-movielens-poc/training"
+  inference: "s3://mlops-movielens-poc/inference"
+
+reporting:
+  output_path: "reports/great_expectations"
+  s3_upload:
+    enabled: true
+    bucket_name: "mlops-movielens-poc"
+    prefix: "reports/great_expectations"
+    region: "ap-south-1"
+    profile: null
+
+stages:
+  raw:
+    datasets:
+      movies:
+        path: "data/raw/movies.dat"
+        reader_options:
+          sep: "::"
+          engine: "python"
+          header: null
+          names: ["MovieID", "Title", "Genres"]
+          encoding: "latin-1"
+      ratings:
+        path: "data/raw/ratings.dat"
+        reader_options:
+          sep: "::"
+          engine: "python"
+          header: null
+          names: ["UserID", "MovieID", "Rating", "Timestamp"]
+          encoding: "latin-1"
+      users:
+        path: "data/raw/users.dat"
+        reader_options:
+          sep: "::"
+          engine: "python"
+          header: null
+          names: ["UserID", "Gender", "Age", "Occupation", "ZipCode"]
+          encoding: "latin-1"
+
+  processed:
+    datasets:
+      movies:
+        path: "data/processed/movies/**/*.parquet"
+      ratings:
+        path: "data/processed/ratings/**/*.parquet"
+      users:
+        path: "data/processed/users/**/*.parquet"
+
+  features:
+    datasets:
+      user_features:
+        path: "user_features/user_features_*.parquet"
+      movie_features:
+        path: "movie_features/movie_features_*.parquet"
+      interaction_features:
+        path: "interaction_features/interaction_features_*.parquet"
+
+  training:
+    datasets: {}
+
+  inference:
+    datasets: {}

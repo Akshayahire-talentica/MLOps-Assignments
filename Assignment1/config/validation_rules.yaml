@@ -1,0 +1,126 @@
+validation_rules:
+  movies:
+    schema_validation:
+      enabled: true
+      strict: true
+      
+    statistical_validation:
+      MovieID:
+        type: "integer"
+        min: 1
+        max: 3952
+        nullable: false
+        
+      Title:
+        type: "string"
+        nullable: false
+        min_length: 1
+        
+      Genres:
+        type: "string"
+        nullable: false
+        valid_values: ["Animation", "Children's", "Comedy", "Adventure", 
+                      "Fantasy", "Romance", "Drama", "Crime", "Thriller",
+                      "Action", "Mystery", "Sci-Fi", "Horror", "Documentary",
+                      "War", "Musical", "Film-Noir", "Western"]
+        
+    referential_integrity:
+      enabled: true
+      foreign_key_checks: []
+      
+    uniqueness:
+      primary_key: ["MovieID"]
+      
+    quality_thresholds:
+      null_rate_acceptable: 0.0
+      duplicate_rate_acceptable: 0.0
+
+  ratings:
+    schema_validation:
+      enabled: true
+      strict: true
+      
+    statistical_validation:
+      UserID:
+        type: "integer"
+        min: 1
+        max: 6040
+        nullable: false
+        
+      MovieID:
+        type: "integer"
+        min: 1
+        max: 3952
+        nullable: false
+        
+      Rating:
+        type: "float"
+        min: 0.5
+        max: 5.0
+        step: 0.5
+        nullable: false
+        
+      Timestamp:
+        type: "long"
+        min_date: "2000-01-01"
+        max_date: "2003-12-31"
+        nullable: false
+        
+    referential_integrity:
+      enabled: true
+      foreign_keys:
+        - source: "UserID"
+          target: "users.UserID"
+        - source: "MovieID"
+          target: "movies.MovieID"
+          
+    business_rules:
+      min_ratings_per_user: 20
+      no_duplicate_user_movie: true
+      
+    uniqueness:
+      primary_key: ["UserID", "MovieID", "Timestamp"]
+      
+    quality_thresholds:
+      null_rate_acceptable: 0.0
+      duplicate_rate_acceptable: 0.001
+      referential_integrity_rate: 0.9999
+
+  users:
+    schema_validation:
+      enabled: true
+      strict: true
+      
+    statistical_validation:
+      UserID:
+        type: "integer"
+        nullable: false
+        
+      Gender:
+        type: "string"
+        valid_values: ["M", "F"]
+        nullable: false
+        
+      Age:
+        type: "integer"
+        min: 1
+        max: 100
+        nullable: false
+        
+      Occupation:
+        type: "integer"
+        min: 0
+        max: 20
+        nullable: true
+        
+      ZipCode:
+        type: "string"
+        regex: "^[0-9]{5}$"
+        nullable: false
+        
+    uniqueness:
+      primary_key: ["UserID"]
+      
+    quality_thresholds:
+      null_rate_acceptable: 0.02
+      duplicate_rate_acceptable: 0.0

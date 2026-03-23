@@ -1,0 +1,62 @@
+data_sources:
+  movies:
+    path: "data/raw/movies.dat"
+    delimiter: "::"
+    schema:
+      movie_id: Integer
+      title: String
+      genres: String
+    
+  ratings:
+    path: "data/raw/ratings.dat"
+    delimiter: "::"
+    schema:
+      user_id: Integer
+      movie_id: Integer
+      rating: Float
+      timestamp: Long
+    
+  users:
+    path: "data/raw/users.dat"
+    delimiter: "::"
+    schema:
+      user_id: Integer
+      gender: String
+      age: Integer
+      occupation: Integer
+      zip_code: String
+
+output:
+  format: "parquet"
+  compression: "snappy"
+  storage_path: "data/processed"
+
+# AWS S3 Configuration (optional - set to enable cloud storage)
+s3:
+  enabled: true  # Set to true to use S3 storage
+  bucket_name: "mlops-movielens-poc"  # Your bucket name with your bucket name
+  raw_data_prefix: "raw/"
+  processed_data_prefix: "processed/"
+  region: "ap-south-1"
+  metadata_prefix: "metadata/"
+  # Optional: specify profile if not using default credentials
+  profile: null  # or "tohid" for named profile
+  
+ingestion:
+  batch_size: 10000
+  num_workers: 4
+  retry_attempts: 3
+  timeout_seconds: 300
+
+metadata:
+  track_lineage: true
+  create_manifest: true
+  version_data: true
+
+# Feature Engineering Configuration
+features:
+  version: "v1"
+  output_path: "data/features"
+  output_format: "parquet"
+  save_csv: true
+  compression: "snappy"

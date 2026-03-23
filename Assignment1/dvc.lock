@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: .\venv\Scripts\python.exe src/data_ingestion/run_ingestion.py
+    deps:
+    - path: config/data_ingestion_config.yaml
+      hash: md5
+      md5: 9a3d61bbdc3cb6bc743474b27ea21728
+      size: 1250
+    - path: data/raw/movies.dat
+      hash: md5
+      md5: 73eeac0d35f9a48af1006405bd8911e4
+      size: 175191
+    - path: data/raw/ratings.dat
+      hash: md5
+      md5: 3e10346c6f0034d81a9a8cc9ff5a21b3
+      size: 25594340
+    - path: data/raw/users.dat
+      hash: md5
+      md5: 978f9c5b6cb9decb0f2b226456f2f235
+      size: 140408
+    - path: src/data_ingestion/ingest_movies.py
+      hash: md5
+      md5: 95291bcc71b38fc4c3a7cf3c33eebee3
+      size: 19046
+    - path: src/data_ingestion/run_ingestion.py
+      hash: md5
+      md5: 5b5fecfa72c60f95f29b064c73071e4d
+      size: 5099
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 121dd9da32d886007a702200a3d815f5.dir
+      size: 5529535
+      nfiles: 3
+  data_validation:
+    cmd: .\venv\Scripts\python.exe src/data_validation/run_validation.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 121dd9da32d886007a702200a3d815f5.dir
+      size: 5529535
+      nfiles: 3
+    - path: src/data_validation/run_validation.py
+      hash: md5
+      md5: 42f795d8c8270729a0c7ab7db3aa65fd
+      size: 4793
+    - path: src/data_validation/validators.py
+      hash: md5
+      md5: 448762d939eb212357241282633241b4
+      size: 22002
+    outs:
+    - path: data/validated
+      hash: md5
+      md5: 3dabe74f5beeddee92941ee948c6e038.dir
+      size: 0
+      nfiles: 1

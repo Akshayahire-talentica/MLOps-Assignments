@@ -1,0 +1,37 @@
+# Streamlit UI - Ignore sensitive and generated files
+
+# Streamlit cache
+.streamlit/secrets.toml
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment variables (keep .env.example)
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data files (keep sample files)
+data/predictions/*.csv
+data/processed/*.csv
+!data/raw/sample_batch_movies.csv
+
+# Temporary files
+*.tmp
+*.temp
